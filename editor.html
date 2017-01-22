@@ -1,0 +1,136 @@
+<html style="background-color: #0a0f14">
+    <head>
+      <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+      <title>Mixmax &middot; Giphy</title>
+
+      <!-- Mixmax SDK -->
+      <script defer src="https://d1xa36cy0xt122.cloudfront.net/v1/Mixmax.js"></script>
+
+      <!-- <link rel="stylesheet" href="/styles.css"> -->
+      <link href='//fonts.googleapis.com/css?family=Merriweather:400,700,400italic,700italic,900,900italic,300italic,300' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
+        <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
+      <script src="//code.jquery.com/jquery-2.1.3.min.js"></script>
+      <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.2/underscore-min.js"></script>
+      <script src="//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min.js"></script>
+      <script src="/lib/masonry.js"></script>
+      <script src="https://cdn.rawgit.com/showdownjs/showdown/1.6.0/dist/showdown.min.js"></script>
+      <script>
+		document.addEventListener("keydown", keyDownTextField, false);
+
+		function keyDownTextField(e) {
+			var keyCode = e.keyCode;
+			if(keyCode==13) {
+				var converter = new showdown.Converter();
+                text      = document.getElementById("markdown").value,
+                html      = converter.makeHtml(text);
+	            console.log(html);
+			}  	
+		}
+
+
+        function _submit() {
+            console.log('Im done');
+            var converter = new showdown.Converter();
+                text      = document.getElementById("markdown").value,
+                html      = converter.makeHtml(text);
+            console.log(html);
+            Mixmax.done({
+                src: html
+            });
+        }
+
+        function _cancel() {
+			var converter = new showdown.Converter();
+                text      = document.getElementById("markdown").value,
+                html      = converter.makeHtml(text);
+            console.log(html);
+            Mixmax.cancel();
+        }
+      </script>
+
+    </head>
+    <body>
+        <input 
+            type="button" 
+            value="Cancel" 
+            onclick="_cancel()"
+            style="font-size:7pt;color:white;background-color:blue;border:2px solid #336600;padding:3px;">
+        <input
+            type="button" 
+            value="Submit"
+            onclick="_submit()" 
+            style="align:right;font-size:7pt;color:white;background-color:green;border:2px solid #336600;padding:3px;"> 
+        <textarea id="markdown" > </textarea> 
+        <script>
+			var simplemde = new SimpleMDE({
+				autofocus: true,
+				autosave: {
+					enabled: true,
+					uniqueId: "MyUniqueID",
+					delay: 1000,
+				},
+				blockStyles: {
+					bold: "__",
+					italic: "_"
+				},
+				element: document.getElementById("markdown"),
+				forceSync: true,
+				hideIcons: ["guide", "heading"],
+				indentWithTabs: false,
+				initialValue: "Hello world!",
+				insertTexts: {
+					horizontalRule: ["", "\n\n-----\n\n"],
+					image: ["![](http://", ")"],
+					link: ["[", "](http://)"],
+					table: ["", "\n\n| Column 1 | Column 2 | Column 3 |\n| -------- | -------- | -------- |\n| Text     | Text      | Text     |\n\n"],
+				},
+				lineWrapping: false,
+				parsingConfig: {
+					allowAtxHeaderWithoutSpace: true,
+					strikethrough: false,
+					underscoresBreakWords: true,
+				},
+				placeholder: "Type here...",
+				previewRender: function(plainText) {
+					return customMarkdownParser(plainText); // Returns HTML from a custom parser
+				},
+				previewRender: function(plainText, preview) { // Async method
+					setTimeout(function(){
+						preview.innerHTML = customMarkdownParser(plainText);
+					}, 250);
+
+					return "Loading...";
+				},
+				promptURLs: true,
+				renderingConfig: {
+					singleLineBreaks: false,
+					codeSyntaxHighlighting: true,
+				},
+				shortcuts: {
+					drawTable: "Cmd-Alt-T"
+				},
+				showIcons: ["code", "table"],
+				spellChecker: false,
+				status: false,
+				status: ["autosave", "lines", "words", "cursor"], // Optional usage
+				status: ["autosave", "lines", "words", "cursor", {
+					className: "keystrokes",
+					defaultValue: function(el) {
+						this.keystrokes = 0;
+						el.innerHTML = "0 Keystrokes";
+					},
+					onUpdate: function(el) {
+						el.innerHTML = ++this.keystrokes + " Keystrokes";
+					}
+				}], // Another optional usage, with a custom status bar item that counts keystrokes
+				styleSelectedText: false,
+				tabSize: 4,
+				toolbar: false,
+				toolbarTips: false,
+			});	
+        </script>
+    </body>
+</html>
